@@ -200,7 +200,7 @@ public class MethodHeapsort {
         int movimentacoes = 3 * (n - 1);
 
         try (PrintWriter writer = new PrintWriter(new FileWriter("matricula_heapsort.txt"))) {
-            writer.printf("%d\t%d\t%d\t%d%n", 740791, tempoExecucao, comparacoes, movimentacoes);
+            writer.printf("%s\t%d\t%d\t%d%n", 740791|1427063, tempoExecucao, comparacoes, movimentacoes);
         } catch (IOException e) {
             e.printStackTrace();
         }

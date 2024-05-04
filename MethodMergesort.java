@@ -174,67 +174,73 @@ class Acomodacao implements Cloneable {
 
 public class MethodMergesort {
 
-    public static void mergeSort(Acomodacao[] array) {
+    // Método auxiliar para mesclar duas metades de um array.
+    private static void merge(Acomodacao[] array, Acomodacao[] aux, int left, int mid, int right, int[] count) {
+        int i = left, j = mid + 1, k = left;
+        
+        // Mesclando as metades em aux[]
+        while (i <= mid && j <= right) {
+            count[0]++; // contando comparações
+            if (array[i].getHostId() < array[j].getHostId() ||
+                    (array[i].getHostId() == array[j].getHostId() && array[i].getRoomId() < array[j].getRoomId())) {
+                aux[k++] = array[i++];
+            } else {
+                aux[k++] = array[j++];
+            }
+            count[1]++; // contando movimentações
+        }
+
+        // Copiando o restante dos elementos da esquerda, se houver
+        while (i <= mid) {
+            aux[k++] = array[i++];
+            count[1]++; // contando movimentações
+        }
+
+        // Copiando o restante dos elementos da direita, se houver
+        while (j <= right) {
+            aux[k++] = array[j++];
+            count[1]++; // contando movimentações
+        }
+
+        // Copiando de volta para o array original
+        for (i = left; i <= right; i++) {
+            array[i] = aux[i];
+            count[1]++; // contando movimentações
+        }
+    }
+
+    // Método recursivo para aplicar MergeSort
+    private static void mergeSort(Acomodacao[] array, Acomodacao[] aux, int left, int right, int[] count) {
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+            mergeSort(array, aux, left, mid, count);
+            mergeSort(array, aux, mid + 1, right, count);
+            merge(array, aux, left, mid, right, count);
+        }
+    }
+
+    // Método de ordenação que configura o MergeSort
+    public static void sort(Acomodacao[] array) {
         long startTime = System.currentTimeMillis();
-        int n = array.length;
-        Acomodacao[] temp = new Acomodacao[n];
-        mergeSortHelper(array, temp, 0, n - 1);
+        Acomodacao[] aux = new Acomodacao[array.length];
+        int[] count = new int[2]; // [0] para comparações, [1] para movimentações
+
+        mergeSort(array, aux, 0, array.length - 1, count);
 
         long endTime = System.currentTimeMillis();
         long tempoExecucao = endTime - startTime;
 
-        int comparacoes = countComparisons;
-        int movimentacoes = countMoves;
-
+        // Criando o arquivo de log
         try (PrintWriter writer = new PrintWriter(new FileWriter("matricula_mergesort.txt"))) {
-            writer.printf("%d\t%d\t%d\t%d%n", 740791, tempoExecucao, comparacoes, movimentacoes);
+            writer.printf("%s\t%d\t%d\t%d%n", 740791|1427063, tempoExecucao, count[0], count[1]);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static int countComparisons = 0;
-    private static int countMoves = 0;
-
-    private static void mergeSortHelper(Acomodacao[] array, Acomodacao[] temp, int left, int right) {
-        if (left < right) {
-            int mid = left + (right - left) / 2;
-            mergeSortHelper(array, temp, left, mid);
-            mergeSortHelper(array, temp, mid + 1, right);
-            merge(array, temp, left, mid, right);
-        }
-    }
-
-    private static void merge(Acomodacao[] array, Acomodacao[] temp, int left, int mid, int right) {
-        for (int i = left; i <= right; i++) {
-            temp[i] = array[i];
-        }
-
-        int i = left;
-        int j = mid + 1;
-        int k = left;
-
-        while (i <= mid && j <= right) {
-            countComparisons++;
-            if (temp[i].getHostId() < temp[j].getHostId() ||
-                    (temp[i].getHostId() == temp[j].getHostId() && temp[i].getRoomId() < temp[j].getRoomId())) {
-                array[k++] = temp[i++];
-                countMoves++;
-            } else {
-                array[k++] = temp[j++];
-                countMoves++;
-            }
-        }
-
-        while (i <= mid) {
-            array[k++] = temp[i++];
-            countMoves++;
-        }
-    }
-
     public static void main(String[] args) {
         try (BufferedReader br = new BufferedReader(new FileReader("/tmp/dados_airbnb.txt"))) {
-            br.readLine();
+            br.readLine(); // Descartando a primeira linha
 
             Acomodacao[] acomodacoes = new Acomodacao[127993];
             int i = 0;
@@ -244,27 +250,23 @@ public class MethodMergesort {
             }
 
             BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(System.in));
-            String id = reader.readLine();
-            int ord = Integer.parseInt(id);
+            int ord = Integer.parseInt(reader.readLine());
             Acomodacao[] acomodacoesOrdenadas = new Acomodacao[ord];
 
             for (i = 0; i < ord; i++) {
-                id = reader.readLine();
-                int idBusca = Integer.parseInt(id);
+                int idBusca = Integer.parseInt(reader.readLine());
                 for (Acomodacao a : acomodacoes) {
-                    if (a != null && a.getHostId() == idBusca) {
+                    if (a != null && a.getRoomId() == idBusca) {
                         acomodacoesOrdenadas[i] = a;
                         break;
                     }
                 }
             }
 
-            mergeSort(acomodacoesOrdenadas);
+            sort(acomodacoesOrdenadas);
 
             for (i = 0; i < ord; i++) {
-                if (acomodacoesOrdenadas[i] != null) {
-                    acomodacoesOrdenadas[i].imprimir();
-                }
+                acomodacoesOrdenadas[i].imprimir();
             }
         } catch (IOException e) {
             e.printStackTrace();

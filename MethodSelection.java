@@ -200,7 +200,7 @@ public class MethodSelection {
         long endTime = System.currentTimeMillis();
         long executionTime = endTime - startTime;
 
-        log.append(String.format("%d\t%d\t%d\t%d%n", 740791, executionTime, comparisons, moves));
+        log.append(String.format("%s\t%d\t%d\t%d%n", 740791|1427063, executionTime, comparisons, moves));
     }
 
     public static int compareAcomodacoes(Acomodacao a, Acomodacao b) {

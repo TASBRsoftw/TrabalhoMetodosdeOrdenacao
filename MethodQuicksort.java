@@ -38,8 +38,8 @@ class Acomodacao implements Cloneable {
 
     public void imprimir() {
         System.out.printf("[%d ## %d ## %s ## %s ## %s ## %s ## %d ## %.1f ## %d ## %.1f ## %.1f ## %s]%n",
-                          roomId, hostId, roomType, country, city, neighbourhood, reviews, overallSatisfaction,
-                          accommodates, bedrooms, price, propertyType);
+                roomId, hostId, roomType, country, city, neighbourhood, reviews, overallSatisfaction,
+                accommodates, bedrooms, price, propertyType);
     }
 
     public static Acomodacao ler(BufferedReader br) throws IOException {
@@ -62,44 +62,47 @@ class Acomodacao implements Cloneable {
         String propertyType = parts[11];
 
         return new Acomodacao(roomId, hostId, roomType, country, city, neighbourhood, reviews,
-                              overallSatisfaction, accommodates, bedrooms, price, propertyType);
+                overallSatisfaction, accommodates, bedrooms, price, propertyType);
     }
 
-    // Getters and setters for all fields, not included here for brevity
+    public double getPrice() {
+        return price;
+    }
 
-    // Quicksort related methods
-    public static void quickSort(Acomodacao[] array, int esq, int dir, QuicksortStats stats) {
-        if (esq < dir) {
-            int j = partition(array, esq, dir, stats);
-            quickSort(array, esq, j - 1, stats);
-            quickSort(array, j + 1, dir, stats);
+    public String getRoomType() {
+        return roomType;
+    }
+
+    public int getRoomId() {
+        return roomId;
+    }
+}
+
+public class MethodQuicksort {
+    public static void quickSort(Acomodacao[] array, int left, int right, Contador contador) {
+        if (left < right) {
+            int pivotIndex = partition(array, left, right, contador);
+            quickSort(array, left, pivotIndex - 1, contador);
+            quickSort(array, pivotIndex + 1, right, contador);
         }
     }
 
-    public static int partition(Acomodacao[] array, int esq, int dir, QuicksortStats stats) {
-        Acomodacao pivot = array[dir];
-        int i = (esq - 1);
-
-        for (int j = esq; j < dir; j++) {
-            stats.comparisons++; // Comparing elements for sorting
-            if (compare(array[j], pivot) < 0) {
+    private static int partition(Acomodacao[] array, int left, int right, Contador contador) {
+        Acomodacao pivot = array[right];
+        int i = (left - 1);
+        for (int j = left; j <= right - 1; j++) {
+            contador.incrementaComparacoes();  // Contagem de comparações
+            if (array[j].getPrice() < pivot.getPrice() ||
+                    (array[j].getPrice() == pivot.getPrice() && array[j].getRoomType().compareTo(pivot.getRoomType()) < 0) ||
+                    (array[j].getPrice() == pivot.getPrice() && array[j].getRoomType().equals(pivot.getRoomType()) && array[j].getRoomId() < pivot.getRoomId())) {
                 i++;
                 swap(array, i, j);
-                stats.movements += 3; // Swap counts as three movements
+                contador.incrementaMovimentacoes();  // Contagem de movimentações
             }
         }
-
-        swap(array, i + 1, dir);
-        stats.movements += 3; // Swap counts as three movements
-        return i + 1;
-    }
-
-    private static int compare(Acomodacao a, Acomodacao b) {
-        if (a.price < b.price) return -1;
-        if (a.price > b.price) return 1;
-        int roomTypeCompare = a.roomType.compareTo(b.roomType);
-        if (roomTypeCompare != 0) return roomTypeCompare;
-        return Integer.compare(a.roomId, b.roomId);
+        swap(array, i + 1, right);
+        contador.incrementaMovimentacoes();  // Contagem de movimentações
+        return (i + 1);
     }
 
     private static void swap(Acomodacao[] array, int i, int j) {
@@ -107,19 +110,11 @@ class Acomodacao implements Cloneable {
         array[i] = array[j];
         array[j] = temp;
     }
-}
-
-class QuicksortStats {
-    public long timeTaken;
-    public int comparisons = 0;
-    public int movements = 0;
-}
-
-public class MethodQuicksort {
 
     public static void main(String[] args) {
         try (BufferedReader br = new BufferedReader(new FileReader("/tmp/dados_airbnb.txt"))) {
-            br.readLine(); // Skip header
+            br.readLine(); // Descartando a primeira linha
+
             Acomodacao[] acomodacoes = new Acomodacao[127993];
             int i = 0;
             Acomodacao acomodacao;
@@ -128,11 +123,11 @@ public class MethodQuicksort {
             }
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            int ord = Integer.parseInt(reader.readLine().trim());
+            int ord = Integer.parseInt(reader.readLine());
             Acomodacao[] acomodacoesOrdenadas = new Acomodacao[ord];
 
             for (i = 0; i < ord; i++) {
-                int idBusca = Integer.parseInt(reader.readLine().trim());
+                int idBusca = Integer.parseInt(reader.readLine());
                 for (Acomodacao a : acomodacoes) {
                     if (a != null && a.getRoomId() == idBusca) {
                         acomodacoesOrdenadas[i] = a;
@@ -141,22 +136,42 @@ public class MethodQuicksort {
                 }
             }
 
-            QuicksortStats stats = new QuicksortStats();
+            Contador contador = new Contador();
             long startTime = System.currentTimeMillis();
-            Acomodacao.quickSort(acomodacoesOrdenadas, 0, acomodacoesOrdenadas.length - 1, stats);
-            stats.timeTaken = System.currentTimeMillis() - startTime;
-
-            for (Acomodacao a : acomodacoesOrdenadas) {
-                if (a != null) a.imprimir();
-            }
+            quickSort(acomodacoesOrdenadas, 0, ord - 1, contador);
+            long endTime = System.currentTimeMillis();
+            long tempoExecucao = endTime - startTime;
 
             try (PrintWriter writer = new PrintWriter(new FileWriter("matricula_quicksort.txt"))) {
-                writer.printf("%d\t%d\t%d\t%d%n", 740791, stats.timeTaken, stats.comparisons, stats.movements);
-            } catch (IOException e) {
-                e.printStackTrace();
+                writer.printf("%d\t%d\t%d\t%d%n", 740791, tempoExecucao, contador.getComparacoes(), contador.getMovimentacoes());
+            }
+
+            for (i = 0; i < ord; i++) {
+                acomodacoesOrdenadas[i].imprimir();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+}
+
+class Contador {
+    private int comparacoes = 0;
+    private int movimentacoes = 0;
+
+    public void incrementaComparacoes() {
+        comparacoes++;
+    }
+
+    public void incrementaMovimentacoes() {
+        movimentacoes++;
+    }
+
+    public int getComparacoes() {
+        return comparacoes;
+    }
+
+    public int getMovimentacoes() {
+        return movimentacoes;
     }
 }

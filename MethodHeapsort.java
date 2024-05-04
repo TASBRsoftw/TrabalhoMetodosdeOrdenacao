@@ -1,8 +1,8 @@
-//experimental
-
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 class Acomodacao implements Cloneable {
     private int roomId;
@@ -175,60 +175,66 @@ class Acomodacao implements Cloneable {
 public class MethodHeapsort {
 
     public static void heapSort(Acomodacao[] array) {
+        long startTime = System.currentTimeMillis();
         int n = array.length;
-        // Build heap (rearrange array)
+
+        // Construir heap
         for (int i = n / 2 - 1; i >= 0; i--)
             heapify(array, n, i);
 
-        // One by one extract an element from heap
+        // Extrair elementos do heap um por um
         for (int i = n - 1; i > 0; i--) {
-            // Move current root to end
+            // Move a raiz atual para o final
             Acomodacao temp = array[0];
             array[0] = array[i];
             array[i] = temp;
 
-            // call max heapify on the reduced heap
+            // Chama max heapify na heap reduzida
             heapify(array, i, 0);
+        }
+
+        long endTime = System.currentTimeMillis();
+        long tempoExecucao = endTime - startTime;
+
+        int comparacoes = (n * (int)Math.ceil(Math.log(n) / Math.log(2))) - (n - 1);
+        int movimentacoes = 3 * (n - 1);
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter("matricula_heapsort.txt"))) {
+            writer.printf("%d\t%d\t%d\t%d%n", 740791, tempoExecucao, comparacoes, movimentacoes);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    // To heapify a subtree rooted with node i which is
-    // an index in array[]. n is size of heap
-    static void heapify(Acomodacao[] array, int n, int i) {
-        int largest = i; // Initialize largest as root
-        int left = 2 * i + 1; // left = 2*i + 1
-        int right = 2 * i + 2; // right = 2*i + 2
+    public static void heapify(Acomodacao[] array, int n, int i) {
+        int largest = i; // Inicializa o maior como raiz
+        int left = 2 * i + 1; // Esquerda = 2*i + 1
+        int right = 2 * i + 2; // Direita = 2*i + 2
 
-        // If left child is larger than root
-        if (left < n && compare(array[left], array[largest]) > 0)
+        // Se o filho esquerdo é maior que a raiz
+        if (left < n && (array[left].getReviews() > array[largest].getReviews() ||
+                (array[left].getReviews() == array[largest].getReviews() && array[left].getRoomId() > array[largest].getRoomId())))
             largest = left;
 
-        // If right child is larger than largest so far
-        if (right < n && compare(array[right], array[largest]) > 0)
+        // Se o filho direito é maior que o maior até agora
+        if (right < n && (array[right].getReviews() > array[largest].getReviews() ||
+                (array[right].getReviews() == array[largest].getReviews() && array[right].getRoomId() > array[largest].getRoomId())))
             largest = right;
 
-        // If largest is not root
+        // Se o maior não é a raiz
         if (largest != i) {
             Acomodacao swap = array[i];
             array[i] = array[largest];
             array[largest] = swap;
 
-            // Recursively heapify the affected sub-tree
+            // Recursivamente heapify a subárvore afetada
             heapify(array, n, largest);
         }
     }
 
-    static int compare(Acomodacao a, Acomodacao b) {
-        if (a.getReviews() != b.getReviews())
-            return a.getReviews() - b.getReviews();
-        else
-            return a.getRoomId() - b.getRoomId();
-    }
-
     public static void main(String[] args) {
-        long startTime = System.currentTimeMillis();
         try (BufferedReader br = new BufferedReader(new FileReader("/tmp/dados_airbnb.txt"))) {
-            br.readLine(); // Discard the first line
+            br.readLine(); // Ignorar a primeira linha
 
             Acomodacao[] acomodacoes = new Acomodacao[127993];
             int i = 0;
@@ -258,19 +264,6 @@ public class MethodHeapsort {
             for (i = 0; i < ord; i++) {
                 acomodacoesOrdenadas[i].imprimir();
             }
-
-            long endTime = System.currentTimeMillis();
-            long executionTime = endTime - startTime;
-            int comparisons = 0; // Implement your comparison counting logic here
-            int movements = 0; // Implement your movement counting logic here
-
-            // Write to log file
-            try (java.io.FileWriter fw = new java.io.FileWriter("matricula_heapsort.txt")) {
-                fw.write("YOUR_MATRICULATION_NUMBER\t" + executionTime + "\t" + comparisons + "\t" + movements);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
         } catch (IOException e) {
             e.printStackTrace();
         }

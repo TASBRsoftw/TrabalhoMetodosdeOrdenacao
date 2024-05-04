@@ -1,7 +1,8 @@
-package MetodosIndividuais;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.BufferedWriter;
 
 class Acomodacao implements Cloneable {
     private int roomId;
@@ -173,12 +174,16 @@ class Acomodacao implements Cloneable {
 
 public class Selection {
 
-    public static void selectionSort(Acomodacao[] array) {
+    public static void selectionSort(Acomodacao[] array, StringBuilder log) {
+        long startTime = System.currentTimeMillis();
         int n = array.length;
+        int comparisons = 0;
+        int moves = 0;
 
         for (int i = 0; i < n - 1; i++) {
             int minIndex = i;
             for (int j = i + 1; j < n; j++) {
+                comparisons++;
                 if (compareAcomodacoes(array[j], array[minIndex]) < 0) {
                     minIndex = j;
                 }
@@ -187,8 +192,14 @@ public class Selection {
                 Acomodacao temp = array[i];
                 array[i] = array[minIndex];
                 array[minIndex] = temp;
+                moves += 3;
             }
         }
+
+        long endTime = System.currentTimeMillis();
+        long executionTime = endTime - startTime;
+
+        log.append(String.format("%d\t%d\t%d\t%d%n", 740791, executionTime, comparisons, moves));
     }
 
     public static int compareAcomodacoes(Acomodacao a, Acomodacao b) {
@@ -239,7 +250,16 @@ public class Selection {
                 }
             }
 
-            selectionSort(acomodacoesOrdenadas);
+            StringBuilder log = new StringBuilder();
+
+            selectionSort(acomodacoesOrdenadas, log);
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("matricula_selecao.txt"))) {
+
+                writer.write(log.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             for (i = 0; i < ord; i++) {
                 acomodacoesOrdenadas[i].imprimir();

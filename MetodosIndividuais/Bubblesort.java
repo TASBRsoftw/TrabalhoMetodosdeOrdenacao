@@ -1,7 +1,8 @@
-package MetodosIndividuais;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 class Acomodacao implements Cloneable {
     private int roomId;
@@ -174,11 +175,16 @@ class Acomodacao implements Cloneable {
 public class Bubblesort {
 
     public static void bubbleSort(Acomodacao[] array) {
+        long startTime = System.currentTimeMillis(); // Marca o início da execução do algoritmo
         int n = array.length;
         boolean swapped;
+        int comparacoes = 0; // Contador de comparações
+        int movimentacoes = 0; // Contador de movimentações
+
         do {
             swapped = false;
             for (int i = 1; i < n; i++) {
+                comparacoes++; // Incrementa o contador de comparações
                 if (array[i - 1].getOverallSatisfaction() > array[i].getOverallSatisfaction() ||
                         (array[i - 1].getOverallSatisfaction() == array[i].getOverallSatisfaction() &&
                                 array[i - 1].getRoomId() > array[i].getRoomId())) {
@@ -186,10 +192,21 @@ public class Bubblesort {
                     array[i - 1] = array[i];
                     array[i] = temp;
                     swapped = true;
+                    movimentacoes += 3; // Incrementa o contador de movimentações
                 }
             }
             n--;
         } while (swapped);
+
+        long endTime = System.currentTimeMillis(); // Marca o fim da execução do algoritmo
+        long tempoExecucao = endTime - startTime; // Calcula o tempo de execução em milissegundos
+
+        // Escreve as informações de log no arquivo
+        try (PrintWriter writer = new PrintWriter(new FileWriter("matricula_bolha.txt"))) {
+            writer.printf("%d\t%d\t%d\t%d%n", 740791, tempoExecucao, comparacoes, movimentacoes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

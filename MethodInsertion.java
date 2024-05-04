@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.BufferedWriter;
 
 class Acomodacao implements Cloneable {
     private int roomId;
@@ -172,54 +171,39 @@ class Acomodacao implements Cloneable {
     }
 }
 
-public class Selection {
+public class MethodInsertion {
 
-    public static void selectionSort(Acomodacao[] array, StringBuilder log) {
+    public static void insertionSort(Acomodacao[] array) {
         long startTime = System.currentTimeMillis();
+
         int n = array.length;
         int comparisons = 0;
-        int moves = 0;
+        int movements = 0;
+        for (int i = 1; i < n; ++i) {
+            Acomodacao key = array[i];
+            int j = i - 1;
 
-        for (int i = 0; i < n - 1; i++) {
-            int minIndex = i;
-            for (int j = i + 1; j < n; j++) {
+            while (j >= 0 && (array[j].getAccommodates() > key.getAccommodates() ||
+                    (array[j].getAccommodates() == key.getAccommodates() &&
+                            array[j].getRoomId() > key.getRoomId()))) {
+                array[j + 1] = array[j];
+                j = j - 1;
+
                 comparisons++;
-                if (compareAcomodacoes(array[j], array[minIndex]) < 0) {
-                    minIndex = j;
-                }
+                movements++;
             }
-            if (minIndex != i) {
-                Acomodacao temp = array[i];
-                array[i] = array[minIndex];
-                array[minIndex] = temp;
-                moves += 3;
-            }
+            array[j + 1] = key;
+            movements++;
         }
 
         long endTime = System.currentTimeMillis();
         long executionTime = endTime - startTime;
 
-        log.append(String.format("%d\t%d\t%d\t%d%n", 740791, executionTime, comparisons, moves));
-    }
-
-    public static int compareAcomodacoes(Acomodacao a, Acomodacao b) {
-        // Ordenação por país
-        int compare = a.getCountry().compareTo(b.getCountry());
-        if (compare != 0)
-            return compare;
-
-        // Ordenação por cidade
-        compare = a.getCity().compareTo(b.getCity());
-        if (compare != 0)
-            return compare;
-
-        // Ordenação por vizinhança
-        compare = a.getNeighbourhood().compareTo(b.getNeighbourhood());
-        if (compare != 0)
-            return compare;
-
-        // Ordenação por ID da acomodação
-        return Integer.compare(a.getRoomId(), b.getRoomId());
+        try (FileWriter writer = new FileWriter("matrícula_insercao.txt")) {
+            writer.write(String.format("%d\t%d\t%d\t%d%n", 740791, executionTime, comparisons, movements));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
@@ -250,20 +234,12 @@ public class Selection {
                 }
             }
 
-            StringBuilder log = new StringBuilder();
-
-            selectionSort(acomodacoesOrdenadas, log);
-
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("matricula_selecao.txt"))) {
-
-                writer.write(log.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            insertionSort(acomodacoesOrdenadas);
 
             for (i = 0; i < ord; i++) {
                 acomodacoesOrdenadas[i].imprimir();
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

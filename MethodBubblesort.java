@@ -172,7 +172,7 @@ class Acomodacao implements Cloneable {
     }
 }
 
-public class Bubblesort {
+public class MethodBubblesort {
 
     public static void bubbleSort(Acomodacao[] array) {
         long startTime = System.currentTimeMillis(); // Marca o início da execução do algoritmo

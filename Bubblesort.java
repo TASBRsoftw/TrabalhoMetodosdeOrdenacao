@@ -170,7 +170,7 @@ class Acomodacao implements Cloneable {
     }
 }
 
-public class Main {
+public class Bubblesort {
 
     public static void bubbleSort(Acomodacao[] array) {
         int n = array.length;

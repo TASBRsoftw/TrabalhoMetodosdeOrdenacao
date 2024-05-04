@@ -238,7 +238,7 @@ public class MethodBubblesort {
 
             bubbleSort(acomodacoesOrdenadas);
 
-            for (i = 0; i < 2000; i++) {
+            for (i = 0; i < ord; i++) {
                 acomodacoesOrdenadas[i].imprimir();
             }
         } catch (IOException e) {

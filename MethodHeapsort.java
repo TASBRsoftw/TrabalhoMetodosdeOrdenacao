@@ -255,7 +255,7 @@ public class MethodHeapsort {
 
             heapSort(acomodacoesOrdenadas);
 
-            for (i = 0; i < 2000; i++) {
+            for (i = 0; i < ord; i++) {
                 acomodacoesOrdenadas[i].imprimir();
             }
 

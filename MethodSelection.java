@@ -171,7 +171,7 @@ class Acomodacao implements Cloneable {
     }
 }
 
-public class Selection {
+public class MethodSelection {
 
     public static void selectionSort(Acomodacao[] array) {
         int n = array.length;

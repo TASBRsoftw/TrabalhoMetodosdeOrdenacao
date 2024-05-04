@@ -171,30 +171,27 @@ class Acomodacao implements Cloneable {
     }
 }
 
-public class Bubblesort {
+public class MethodInsertion {
 
-    public static void bubbleSort(Acomodacao[] array) {
+    public static void insertionSort(Acomodacao[] array) {
         int n = array.length;
-        boolean swapped;
-        do {
-            swapped = false;
-            for (int i = 1; i < n; i++) {
-                if (array[i - 1].getOverallSatisfaction() > array[i].getOverallSatisfaction() ||
-                        (array[i - 1].getOverallSatisfaction() == array[i].getOverallSatisfaction() &&
-                                array[i - 1].getRoomId() > array[i].getRoomId())) {
-                    Acomodacao temp = array[i - 1];
-                    array[i - 1] = array[i];
-                    array[i] = temp;
-                    swapped = true;
-                }
+        for (int i = 1; i < n; ++i) {
+            Acomodacao key = array[i];
+            int j = i - 1;
+
+            while (j >= 0 && (array[j].getAccommodates() > key.getAccommodates() ||
+                    (array[j].getAccommodates() == key.getAccommodates() &&
+                            array[j].getRoomId() > key.getRoomId()))) {
+                array[j + 1] = array[j];
+                j = j - 1;
             }
-            n--;
-        } while (swapped);
+            array[j + 1] = key;
+        }
     }
 
     public static void main(String[] args) {
         try (BufferedReader br = new BufferedReader(new FileReader("/tmp/dados_airbnb.txt"))) {
-            // tmp/
+            // /tmp/
             br.readLine();
 
             Acomodacao[] acomodacoes = new Acomodacao[127993];
@@ -220,11 +217,12 @@ public class Bubblesort {
                 }
             }
 
-            bubbleSort(acomodacoesOrdenadas);
+            insertionSort(acomodacoesOrdenadas);
 
-            for (i = 0; i < 2000; i++) {
+            for (i = 0; i < ord; i++) {
                 acomodacoesOrdenadas[i].imprimir();
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

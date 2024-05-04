@@ -1,8 +1,8 @@
+package Metodos;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 class Acomodacao implements Cloneable {
     private int roomId;
@@ -172,38 +172,36 @@ class Acomodacao implements Cloneable {
     }
 }
 
-public class MethodBubblesort {
+public class Insertion {
 
-    public static void bubbleSort(Acomodacao[] array) {
-        long startTime = System.currentTimeMillis(); // Marca o início da execução do algoritmo
+    public static void insertionSort(Acomodacao[] array) {
+        long startTime = System.currentTimeMillis();
+
         int n = array.length;
-        boolean swapped;
-        int comparacoes = 0; // Contador de comparações
-        int movimentacoes = 0; // Contador de movimentações
+        int comparisons = 0;
+        int movements = 0;
+        for (int i = 1; i < n; ++i) {
+            Acomodacao key = array[i];
+            int j = i - 1;
 
-        do {
-            swapped = false;
-            for (int i = 1; i < n; i++) {
-                comparacoes++; // Incrementa o contador de comparações
-                if (array[i - 1].getOverallSatisfaction() > array[i].getOverallSatisfaction() ||
-                        (array[i - 1].getOverallSatisfaction() == array[i].getOverallSatisfaction() &&
-                                array[i - 1].getRoomId() > array[i].getRoomId())) {
-                    Acomodacao temp = array[i - 1];
-                    array[i - 1] = array[i];
-                    array[i] = temp;
-                    swapped = true;
-                    movimentacoes += 3; // Incrementa o contador de movimentações
-                }
+            while (j >= 0 && (array[j].getAccommodates() > key.getAccommodates() ||
+                    (array[j].getAccommodates() == key.getAccommodates() &&
+                            array[j].getRoomId() > key.getRoomId()))) {
+                array[j + 1] = array[j];
+                j = j - 1;
+
+                comparisons++;
+                movements++;
             }
-            n--;
-        } while (swapped);
+            array[j + 1] = key;
+            movements++;
+        }
 
-        long endTime = System.currentTimeMillis(); // Marca o fim da execução do algoritmo
-        long tempoExecucao = endTime - startTime; // Calcula o tempo de execução em milissegundos
+        long endTime = System.currentTimeMillis();
+        long executionTime = endTime - startTime;
 
-        // Escreve as informações de log no arquivo
-        try (PrintWriter writer = new PrintWriter(new FileWriter("matricula_bolha.txt"))) {
-            writer.printf("%d\t%d\t%d\t%d%n", 740791, tempoExecucao, comparacoes, movimentacoes);
+        try (FileWriter writer = new FileWriter("matrícula_insercao.txt")) {
+            writer.write(String.format("%d\t%d\t%d\t%d%n", 740791, executionTime, comparisons, movements));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -211,7 +209,7 @@ public class MethodBubblesort {
 
     public static void main(String[] args) {
         try (BufferedReader br = new BufferedReader(new FileReader("/tmp/dados_airbnb.txt"))) {
-            // tmp/
+            // /tmp/
             br.readLine();
 
             Acomodacao[] acomodacoes = new Acomodacao[127993];
@@ -237,11 +235,12 @@ public class MethodBubblesort {
                 }
             }
 
-            bubbleSort(acomodacoesOrdenadas);
+            insertionSort(acomodacoesOrdenadas);
 
-            for (i = 0; i < 2000; i++) {
+            for (i = 0; i < ord; i++) {
                 acomodacoesOrdenadas[i].imprimir();
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

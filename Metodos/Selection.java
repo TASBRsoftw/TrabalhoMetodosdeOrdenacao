@@ -1,3 +1,4 @@
+package Metodos;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -172,7 +173,7 @@ class Acomodacao implements Cloneable {
     }
 }
 
-public class MethodSelection {
+public class Selection {
 
     public static void selectionSort(Acomodacao[] array, StringBuilder log) {
         long startTime = System.currentTimeMillis();

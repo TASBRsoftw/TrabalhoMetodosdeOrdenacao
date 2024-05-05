@@ -143,7 +143,7 @@ public class MethodQuicksort {
             long tempoExecucao = endTime - startTime;
 
             try (PrintWriter writer = new PrintWriter(new FileWriter("matricula_quicksort.txt"))) {
-                writer.printf("%s\t%d\t%d\t%d%n", 740791|1427063, tempoExecucao, contador.getComparacoes(), contador.getMovimentacoes());
+                writer.printf("%s\t%d\t%d\t%d%n", "740791|1427063", tempoExecucao, contador.getComparacoes(), contador.getMovimentacoes());
             }
 
             for (i = 0; i < ord; i++) {

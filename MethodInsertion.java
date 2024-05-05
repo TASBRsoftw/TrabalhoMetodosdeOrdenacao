@@ -200,7 +200,7 @@ public class MethodInsertion {
         long executionTime = endTime - startTime;
 
         try (FileWriter writer = new FileWriter("matrícula_insercao.txt")) {
-            writer.write(String.format("%s\t%d\t%d\t%d%n", 740791|1427063, executionTime, comparisons, movements));
+            writer.write(String.format("%s\t%d\t%d\t%d%n", "740791|1427063", executionTime, comparisons, movements));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -232,7 +232,7 @@ public class MethodMergesort {
 
         // Criando o arquivo de log
         try (PrintWriter writer = new PrintWriter(new FileWriter("matricula_mergesort.txt"))) {
-            writer.printf("%s\t%d\t%d\t%d%n", 740791|1427063, tempoExecucao, count[0], count[1]);
+            writer.printf("%s\t%d\t%d\t%d%n", "740791|1427063", tempoExecucao, count[0], count[1]);
         } catch (IOException e) {
             e.printStackTrace();
         }
